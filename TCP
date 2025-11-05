@@ -1,0 +1,31 @@
+import socket, threading, time
+
+PORT = 8080
+
+def server():
+    with socket.socket() as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.bind(('0.0.0.0', PORT)); s.listen(1)
+        print("Server listening on port", PORT)
+        conn, addr = s.accept()
+        with conn:
+            print("Connection from", addr)
+            print("Server received:", conn.recv(1024).decode())
+            conn.send(b"Hello from server")
+            print("Hello message sent from server")
+
+def client():
+    time.sleep(0.5)                 # give server a moment to start
+    with socket.socket() as c:
+        try:
+            c.connect(('127.0.0.1', PORT))
+        except ConnectionRefusedError:
+            print("Connection failed. Is the server running?"); return
+        c.send(b"Hello from client")
+        print("Client: Hello message sent")
+        print("Client received:", c.recv(1024).decode())
+
+t = threading.Thread(target=server)
+t.start()
+client()
+t.join()
