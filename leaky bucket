@@ -1,0 +1,18 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    int storage = 0, bucket_size = 10, input_pkt = 4, output_pkt = 1;
+
+    for (int i = 0; i < 4; i++) {
+        if (storage + input_pkt > bucket_size)
+            cout << "Packet loss = " << input_pkt << endl;
+        else
+            storage += input_pkt;
+
+        cout << "Buffer size = " << storage << " out of bucket size = " << bucket_size << endl;
+        storage -= output_pkt;
+    }
+
+    return 0;
+}
