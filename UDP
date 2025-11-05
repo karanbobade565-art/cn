@@ -1,0 +1,25 @@
+import socket, threading, time
+
+PORT = 8080
+
+def server():
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.bind(('0.0.0.0', PORT))
+        print(f"UDP Server listening on port {PORT}")
+        data, addr = s.recvfrom(1024)
+        print(f"Server received: {data.decode()} from {addr}")
+        s.sendto(b"Hello from UDP server", addr)
+        print("Response sent from server")
+
+def client():
+    time.sleep(0.5)
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as c:
+        c.sendto(b"Hello from UDP client", ('127.0.0.1', PORT))
+        print("Client: Message sent")
+        data, _ = c.recvfrom(1024)
+        print(f"Client received: {data.decode()}")
+
+t = threading.Thread(target=server)
+t.start()
+client()
+t.join()
